@@ -1,2 +1,51 @@
-# legalearse
-AI-powered legal document generator with Streamlit frontend and FastAPI backend
+# LegalEase
+
+LegalEase is an AI-powered legal document generator designed to simplify the creation of legal documents for individuals, founders, landlords, freelancers, and businesses.
+
+## Features
+
+- Generate multiple legal document types, including employment contracts, NDAs, service agreements, and lease-style contracts
+- Capture party information, dates, jurisdictions, scope, and custom terms
+- Produce a professional and editable legal draft
+- Export the result as PDF, DOCX, or text-based output
+- Support structured fallback templates when the AI API is unavailable
+- Provide a modular architecture consistent with the project PDF specification
+
+## Architecture based on project specification
+
+- Frontend: Streamlit UI for user inputs, previews, and downloads
+- Backend: FastAPI API with `/generate` and `/health` endpoints
+- AI Core: Gemini integration via `ai_core/gemini_generator.py`
+- Templates: `legalease/templates.py` for structured legal text generation
+- Exporters: `legalease/exporter.py` for PDF and DOCX creation
+
+## Project structure
+
+- app.py: Streamlit application
+- main.py: FastAPI entry point
+- routes.py: API routes and document request model
+- ai_core/gemini_generator.py: Gemini AI document generation
+- legalease/generator.py: generation orchestration
+- legalease/templates.py: backup legal templates
+- legalease/exporter.py: PDF and DOCX export logic
+
+## Quick start
+
+1. Create and activate a virtual environment.
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Copy `.env.example` to `.env` and add your Gemini or OpenAI API key if you want AI-generated wording.
+4. Start the Streamlit frontend:
+   ```bash
+   streamlit run app.py
+   ```
+5. Optionally run the backend API:
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+## Notes
+
+This project is designed for drafting and export support. Final legal review should still be handled by a qualified lawyer or legal professional before use in production.
