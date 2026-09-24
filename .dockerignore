@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.github/
+.vscode/
+.venv/
+.env
+.env.*
+.streamlit/
+*.pdf
+*.docx
+*.txt
+*.log
+.DS_Store
