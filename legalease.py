@@ -15,6 +15,14 @@ except ImportError:  # pragma: no cover
     Document = None
 
 
+DOCUMENT_TYPE_TEMPLATES = {
+    "Service Agreement": "services and support",
+    "NDA": "confidential information and restricted disclosures",
+    "Employment Agreement": "employment duties, compensation, and compliance obligations",
+    "Consulting Agreement": "consulting services, milestones, and deliverables",
+}
+
+
 def _coerce_payload(payload: Any) -> dict[str, str]:
     if isinstance(payload, dict):
         return {str(k): str(v) for k, v in payload.items()}
@@ -25,22 +33,89 @@ def _coerce_payload(payload: Any) -> dict[str, str]:
     return {}
 
 
+def _normalize_payload(data: dict[str, str]) -> dict[str, str]:
+    normalized = {"document_type": data.get("document_type", "Service Agreement")}
+    normalized["party_name"] = data.get("party_name", "Acme Corp")
+    normalized["other_party_name"] = data.get("other_party_name", "Beta LLC")
+    normalized["role"] = data.get("role", "Business professional")
+    normalized["jurisdiction"] = data.get("jurisdiction", "Delaware, USA")
+    normalized["effective_date"] = data.get("effective_date", "2026-10-01")
+    normalized["deliverables"] = data.get("deliverables", DOCUMENT_TYPE_TEMPLATES.get(normalized["document_type"], "services and support"))
+    normalized["purpose"] = data.get("purpose", "commercial cooperation")
+    normalized["additional_terms"] = data.get("additional_terms", "confidentiality, governing law, and good-faith performance")
+    return normalized
+
+
 def build_template_document(payload: Any) -> str:
-    data = _coerce_payload(payload)
-    document_type = data.get("document_type", "Service Agreement")
-    party_name = data.get("party_name", "Acme Corp")
-    other_party_name = data.get("other_party_name", "Beta LLC")
-    role = data.get("role", "Business professional")
-    jurisdiction = data.get("jurisdiction", "Delaware, USA")
-    effective_date = data.get("effective_date", "2026-10-01")
-    deliverables = data.get("deliverables", "services and support")
-    purpose = data.get("purpose", "commercial cooperation")
-    additional_terms = data.get("additional_terms", "confidentiality, governing law, and good-faith performance")
+    data = _normalize_payload(_coerce_payload(payload))
+    document_type = data["document_type"]
+    party_name = data["party_name"]
+    other_party_name = data["other_party_name"]
+    role = data["role"]
+    jurisdiction = data["jurisdiction"]
+    effective_date = data["effective_date"]
+    deliverables = data["deliverables"]
+    purpose = data["purpose"]
+    additional_terms = data["additional_terms"]
+
+    if document_type == "NDA":
+        return (
+            f"NON-DISCLOSURE AGREEMENT\n\n"
+            f"This Non-Disclosure Agreement (\"Agreement\") is effective as of {effective_date} by and between {party_name} and {other_party_name}.\n\n"
+            "1. Purpose\n"
+            f"The parties desire to protect confidential information exchanged in connection with {purpose}.\n\n"
+            "2. Definition of Confidential Information\n"
+            "Confidential Information includes non-public information disclosed in any form, including oral, written, electronic, visual, or technical materials, which the receiving party reasonably understands to be confidential.\n\n"
+            "3. Obligations\n"
+            f"Each party shall hold and maintain confidential information in strict confidence and shall not disclose such information to any third party except as required by {jurisdiction} law or as expressly authorized in writing by the disclosing party.\n\n"
+            "4. Exclusions\n"
+            "Information that is publicly known, lawfully received from a third party without restriction, or independently developed without the use of confidential information shall not be deemed confidential.\n\n"
+            "5. Term\n"
+            "This Agreement remains in effect for a period of five (5) years from the Effective Date, unless otherwise required by applicable law.\n\n"
+            f"6. Additional Terms\n{additional_terms}\n\n"
+            "IN WITNESS WHEREOF, the parties execute this Agreement as of the Effective Date.\n\n"
+            f"{party_name}\n{other_party_name}\n"
+        )
+
+    if document_type == "Employment Agreement":
+        return (
+            f"EMPLOYMENT AGREEMENT\n\n"
+            f"This Employment Agreement is entered into as of {effective_date} by and between {party_name} and {other_party_name}.\n\n"
+            "1. Position and Duties\n"
+            f"{other_party_name} will employ {party_name} in the role of {role}. The Employee shall perform duties consistent with the position and shall comply with all lawful instructions and company policies.\n\n"
+            "2. Compensation\n"
+            "Compensation and benefits will be provided in accordance with the employer's policies and the terms of this Agreement.\n\n"
+            "3. Confidentiality and Compliance\n"
+            f"The Employee shall protect confidential and proprietary information and shall comply with applicable laws and policies governing the workplace in {jurisdiction}.\n\n"
+            f"4. Scope and Responsibilities\n{deliverables}\n\n"
+            "5. Term and Termination\n"
+            "This Agreement may be terminated by either party in accordance with applicable law and the terms set forth in employer policies.\n\n"
+            f"6. Additional Terms\n{additional_terms}\n\n"
+            "EXECUTED AS OF THE EFFECTIVE DATE ABOVE.\n\n"
+            f"{party_name}\n{other_party_name}\n"
+        )
+
+    if document_type == "Consulting Agreement":
+        return (
+            f"CONSULTING AGREEMENT\n\n"
+            f"This Consulting Agreement is entered into as of {effective_date} by and between {party_name} and {other_party_name}.\n\n"
+            "1. Scope of Services\n"
+            f"Consultant will provide {role} services and deliverables as described in the work plan. The services include: {deliverables}.\n\n"
+            "2. Deliverables and Timeline\n"
+            f"Deliverables will be provided in accordance with mutually agreed timelines and milestones. {purpose}\n\n"
+            "3. Fees and Expenses\n"
+            "Fees will be paid as agreed in writing between the parties and any reimbursable expenses must be approved in advance.\n\n"
+            "4. Confidentiality\n"
+            "Each party shall protect the other's confidential information and use it only for purposes expressly related to this Agreement.\n\n"
+            f"5. Governing Law\nThis Agreement shall be governed by the laws of {jurisdiction}.\n\n"
+            f"6. Additional Terms\n{additional_terms}\n\n"
+            "EXECUTED AS OF THE EFFECTIVE DATE ABOVE.\n\n"
+            f"{party_name}\n{other_party_name}\n"
+        )
 
     return (
         f"{document_type}\n\n"
-        f"This {document_type} (\"Agreement\") is entered into as of {effective_date} by and between {party_name} (\"Party A\") "
-        f"and {other_party_name} (\"Party B\").\n\n"
+        f"This {document_type} (\"Agreement\") is entered into as of {effective_date} by and between {party_name} (\"Party A\") and {other_party_name} (\"Party B\").\n\n"
         "1. Purpose\n"
         f"{purpose}\n\n"
         "2. Role and Scope\n"
@@ -95,7 +170,7 @@ def _generate_with_gemini(data: dict[str, str]) -> str | None:
 
 
 def generate_document(payload: Any) -> str:
-    data = _coerce_payload(payload)
+    data = _normalize_payload(_coerce_payload(payload))
     text = _generate_with_gemini(data)
     if text is not None:
         return text
@@ -183,4 +258,5 @@ __all__ = [
     "export_document_to_pdf",
     "export_document_to_docx",
     "export_document_to_txt",
+    "DOCUMENT_TYPE_TEMPLATES",
 ]
