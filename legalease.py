@@ -1,13 +1,9 @@
-from LegalEase import (
-    build_template_document,
-    export_document_to_docx,
-    export_document_to_pdf,
-    generate_document,
-)
-
-__all__ = [
-    "generate_document",
-    "export_document_to_pdf",
-    "export_document_to_docx",
-    "build_template_document",
-]
+streamlit>=1.36.0
+python-dotenv>=1.0.1
+openai>=1.40.0
+reportlab>=4.2.2
+python-docx==1.2.0
+Pillow>=10.0.0
+fastapi>=0.111.0
+uvicorn>=0.30.0
+google-generativeai>=0.8.0

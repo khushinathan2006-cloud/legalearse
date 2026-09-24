@@ -1,8 +1,10 @@
-__pycache__/
-*.pyc
 .venv/
+__pycache__/
+*.py[cod]
 .env
+.env.*
 .streamlit/
 *.pdf
 *.docx
 *.txt
+.DS_Store
