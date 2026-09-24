@@ -1,6 +1,9 @@
 from pathlib import Path
 
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from legalease import export_document_to_docx, export_document_to_pdf, export_document_to_txt, generate_document
 
@@ -23,6 +26,7 @@ with st.sidebar:
     st.header("Workflow")
     st.markdown("1. Select a document type\n2. Enter party and contract details\n3. Generate the draft\n4. Brand and export")
     st.info("Tip: If AI is not configured, the app uses a structured legal template fallback.")
+    st.caption(f"AI mode: {'Enabled' if os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY') else 'Fallback template'}")
 
     company_name = st.text_input("Company Name", "Acme Legal Solutions")
     uploaded_logo = st.file_uploader("Upload logo", type=["png", "jpg", "jpeg"])
